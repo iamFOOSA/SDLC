@@ -1,0 +1,55 @@
+@startuml
+!pragma layout smetana
+
+interface ModelListener {
+    +onModelChanged()
+}
+
+class CurrencyModel {
+    -amountByn : double
+    -rateEurToByn : double
+    -resultEur : double
+    -dataEntered : boolean
+    -listeners : List<ModelListener>
+    +addListener(ModelListener)
+    +setData(amount, rate)
+    +getAmountByn() : double
+    +getRateEurToByn() : double
+    +getResultEur() : double
+}
+
+class MainView {
+    -lblAmount : JLabel
+    -lblRate : JLabel
+    -lblResult : JLabel
+    +onModelChanged()
+}
+
+class InputDialog {
+    -txtAmount : JTextField
+    -txtRate : JTextField
+    +setValues(amount, rate)
+}
+
+class CurrencyController {
+    -model : CurrencyModel
+    -inputDialog : InputDialog
+    +openInputDialog(JFrame)
+    +processInput(amountStr, rateStr)
+}
+
+class Main {
+    +main(args) : void
+}
+
+MainView ..|> ModelListener
+CurrencyModel "1" o-- "*" ModelListener : notifies
+MainView --> CurrencyController : действия пользователя
+CurrencyController --> CurrencyModel : setData()
+CurrencyController --> InputDialog : создает / показывает
+InputDialog --> CurrencyController : processInput()
+Main --> CurrencyModel
+Main --> CurrencyController
+Main --> MainView
+
+@enduml
